@@ -3,3 +3,11 @@ server :
 spring :
   application :
     name : tuGraph
+  datasource:
+    url: jdbc:mysql://localhost:3306/tugraph?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: ggpp1993
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
