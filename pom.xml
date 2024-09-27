@@ -28,6 +28,12 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <mybatis-spring-version>3.0.4</mybatis-spring-version>
+        <mysql-connector-j-version>9.0.0</mysql-connector-j-version>
+        <mybatis-plus-boot-starter>3.5.8</mybatis-plus-boot-starter>
+        <graphql-java-version>230521-nf-execution</graphql-java-version>
+        <neo4j-java-driver-version>5.24.0</neo4j-java-driver-version>
+        <spring-boot-starter-data-neo4j-version>3.3.4</spring-boot-starter-data-neo4j-version>
     </properties>
     <dependencies>
         <dependency>
@@ -54,17 +60,32 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
-            <version>3.0.4</version>
+            <version>${mybatis-spring-version}</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.0.0</version>
+            <version>${mysql-connector-j-version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.8</version>
+            <version>${mybatis-plus-boot-starter}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java</artifactId>
+            <version>${graphql-java-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j.driver</groupId>
+            <artifactId>neo4j-java-driver</artifactId>
+            <version>${neo4j-java-driver-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+            <version>${spring-boot-starter-data-neo4j-version}</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,7 @@
 package com.ggpp.tugraph.controller;
 
 import com.ggpp.tugraph.service.MainService;
+import com.ggpp.tugraph.service.TuGraphService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,5 +23,10 @@ public class MainController {
     @PostMapping
     public String testPost() {
         return "POST";
+    }
+
+    @PostMapping("/tuGraph")
+    public void doTuGraphTest() {
+        service.doTuGraphTest();
     }
 }
