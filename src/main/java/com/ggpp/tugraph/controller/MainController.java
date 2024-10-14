@@ -3,11 +3,14 @@ package com.ggpp.tugraph.controller;
 import com.ggpp.tugraph.service.MainService;
 import com.ggpp.tugraph.service.TuGraphService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class MainController {
 
@@ -28,5 +31,29 @@ public class MainController {
     @PostMapping("/tuGraph")
     public void doTuGraphTest() {
         service.doTuGraphTest();
+    }
+
+    @GetMapping("/device")
+    public void deviceType(HttpServletRequest request, HttpServletResponse response) {
+        String userAgent = request.getHeader("User-Agent");
+        String deviceType = detectDeviceType(userAgent);
+        log.info("设备："+deviceType);
+    }
+
+    private String detectDeviceType(String userAgent) {
+        if (userAgent == null || userAgent.isEmpty()) {
+            return "Unknown";
+        }
+
+        // Simple logic to detect mobile devices
+        if (userAgent.toLowerCase().contains("mobile")
+                || userAgent.toLowerCase().contains("android")
+                || userAgent.toLowerCase().contains("iphone")
+                || userAgent.toLowerCase().contains("ipad")
+                || userAgent.toLowerCase().contains("windows phone")) {
+            return "Mobile";
+        } else {
+            return "Desktop";
+        }
     }
 }
