@@ -13,8 +13,6 @@ public class NodePersonController {
 
     @PostMapping
     public void doText() {
-        service.createData();
-        // Query data
-        service.findMoviesByPersonName("Alice");
+        service.doText();
     }
 }

@@ -5,11 +5,14 @@ import com.ggpp.tugraph.domain.Person;
 import com.ggpp.tugraph.repositiry.MovieRepository;
 import com.ggpp.tugraph.repositiry.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.neo4j.driver.Session;
+import org.neo4j.driver.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.data.neo4j.core.Neo4jTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -65,4 +68,20 @@ public class TuGraphService {
     }
 
 
+    public void doText() {
+        Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "GGpp1993@"));
+        var result = driver.executableQuery("match (p: Person)-[a:ACTED_IN]->(m: Movie) where m.title = 'Sense and Sensibility'  return p,m,a")
+                .withConfig(QueryConfig.builder().withDatabase("neo4j").build())
+                .execute();
+
+        var records = result.records();
+        records.forEach(r -> {
+            System.out.println(r);  // or r.get("name").asString()
+        });
+
+        var summary = result.summary();
+        System.out.printf("The query %s returned %d records in %d ms.%n",
+                summary.query(), records.size(),
+                summary.resultAvailableAfter(TimeUnit.MILLISECONDS));
+    }
 }
