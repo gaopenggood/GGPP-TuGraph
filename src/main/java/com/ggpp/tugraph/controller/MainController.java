@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Currency;
+import java.util.Set;
+
 @Slf4j
 @RestController
 public class MainController {
@@ -55,5 +58,16 @@ public class MainController {
         } else {
             return "Desktop";
         }
+    }
+
+    @GetMapping("/iso4217")
+    public void iso4217() {
+        Set<Currency> cList = Currency.getAvailableCurrencies();
+        for(Currency c : cList) {
+            if("USD".equals(c.getCurrencyCode())) {
+                log.info("222");
+            }
+        }
+        log.info("111");
     }
 }
