@@ -63,11 +63,16 @@ public class MainController {
     @GetMapping("/iso4217")
     public void iso4217() {
         Set<Currency> cList = Currency.getAvailableCurrencies();
+        int i = 0;
         for(Currency c : cList) {
             if("USD".equals(c.getCurrencyCode())) {
                 log.info("222");
             }
+            if(c.getDefaultFractionDigits() < 0) {
+                log.info("货币："+c.getDisplayName()+"代码："+c.getCurrencyCode()+",符号："+c.getSymbol());
+                i++;
+            }
         }
-        log.info("111");
+        log.info("共有"+i+"种精度小于0");
     }
 }
