@@ -1,14 +1,14 @@
 package com.ggpp.tugraph.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ggpp.tugraph.service.MainService;
 import com.ggpp.tugraph.service.TuGraphService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Currency;
 import java.util.Set;
@@ -74,5 +74,37 @@ public class MainController {
             }
         }
         log.info("共有"+i+"种精度小于0");
+    }
+
+    @PostMapping("jsonInit")
+    public void formatterJson(@RequestBody JsonNode json) {
+        Long comId = 1L;
+        for(JsonNode province : json){
+            //省一级
+            Long id = IdWorker.getId();
+            String name = province.get("name").asText();
+            String code = province.get("code").asText();
+            if(!province.has("city")) {
+                continue;
+            }
+            for(JsonNode city : province.get("city")){
+                Long cityId = IdWorker.getId();
+                String cityCode = city.get("code").asText();
+                String cityName = city.get("name").asText();
+                if(!province.has("area")) {
+                    continue;
+                }
+                for(JsonNode area : city.get("area")){
+                    Long areaId = IdWorker.getId();
+                    String areaCode = area.get("code").asText();
+                    String areaName = area.get("name").asText();
+                }
+            }
+        }
+    }
+
+    @PostMapping("/t2png")
+    public void text2Png(@RequestParam String str) {
+        service.doStr2Png(str);
     }
 }
