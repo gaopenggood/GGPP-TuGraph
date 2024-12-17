@@ -34,6 +34,7 @@
         <graphql-java-version>230521-nf-execution</graphql-java-version>
         <neo4j-java-driver-version>5.24.0</neo4j-java-driver-version>
         <spring-boot-starter-data-neo4j-version>3.3.4</spring-boot-starter-data-neo4j-version>
+        <hutool-all-version>5.8.34</hutool-all-version>
     </properties>
     <dependencies>
         <dependency>
@@ -86,6 +87,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-neo4j</artifactId>
             <version>${spring-boot-starter-data-neo4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool-all-version}</version>
         </dependency>
     </dependencies>
 
