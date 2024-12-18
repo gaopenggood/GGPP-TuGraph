@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/neo4j")
@@ -18,14 +20,24 @@ public class Neo4jController {
     /**
      * 查询数据模型
      */
-    @GetMapping("/visualization")
-    public Object findVisualization() {
-        return service.findVisualization();
+//    @GetMapping("/visualization")
+//    public EagerResult findVisualization() {
+//        return service.findVisualization();
+//    }
+
+    @GetMapping("/nodes")
+    public List<String> findNodeList() {
+        return service.findNodeList();
     }
 
     @GetMapping("/keys")
-    public Object findNodeKeysByLabel(String label) {
+    public List<String> findNodeKeysByLabel(String label) {
         return service.findNodeKeysByLabel(label);
+    }
+
+    @GetMapping("/text")
+    public Object queryText() {
+        return service.queryText();
     }
 
 }

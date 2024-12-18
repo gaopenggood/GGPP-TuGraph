@@ -69,19 +69,19 @@ public class TuGraphService {
 
 
     public void doText() {
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "GGpp1993@"));
-        var result = driver.executableQuery("match (p: Person)-[a:ACTED_IN]->(m: Movie) where m.title = 'Sense and Sensibility'  return p,m,a")
-                .withConfig(QueryConfig.builder().withDatabase("neo4j").build())
-                .execute();
-
-        var records = result.records();
-        records.forEach(r -> {
-            System.out.println(r);  // or r.get("name").asString()
-        });
-
-        var summary = result.summary();
-        System.out.printf("The query %s returned %d records in %d ms.%n",
-                summary.query(), records.size(),
-                summary.resultAvailableAfter(TimeUnit.MILLISECONDS));
+//        Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "GGpp1993@"));
+//        var result = driver.executableQuery("match (p: Person)-[a:ACTED_IN]->(m: Movie) where m.title = 'Sense and Sensibility'  return p,m,a")
+//                .withConfig(QueryConfig.builder().withDatabase("neo4j").build())
+//                .execute();
+//
+//        var records = result.records();
+//        records.forEach(r -> {
+//            System.out.println(r);  // or r.get("name").asString()
+//        });
+//
+//        var summary = result.summary();
+//        System.out.printf("The query %s returned %d records in %d ms.%n",
+//                summary.query(), records.size(),
+//                summary.resultAvailableAfter(TimeUnit.MILLISECONDS));
     }
 }
