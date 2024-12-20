@@ -2,6 +2,7 @@ package com.ggpp.tugraph.controller;
 
 import com.ggpp.tugraph.service.Neo4jService;
 import lombok.extern.slf4j.Slf4j;
+import org.neo4j.driver.EagerResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,10 @@ public class Neo4jController {
     /**
      * 查询数据模型
      */
-//    @GetMapping("/visualization")
-//    public EagerResult findVisualization() {
-//        return service.findVisualization();
-//    }
+    @GetMapping("/visualization")
+    public EagerResult findVisualization() {
+        return service.findVisualization();
+    }
 
     @GetMapping("/nodes")
     public List<String> findNodeList() {
