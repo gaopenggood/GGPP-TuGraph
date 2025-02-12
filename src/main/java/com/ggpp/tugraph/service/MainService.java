@@ -1,17 +1,22 @@
 package com.ggpp.tugraph.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.ggpp.tugraph.domain.BaseUser;
 import com.ggpp.tugraph.mapper.BaseUserMapper;
+import com.ggpp.tugraph.util.FileUtils;
 import com.ggpp.tugraph.util.ImageUtils;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -21,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Service
 public class MainService {
 
@@ -64,17 +70,51 @@ public class MainService {
         String filePath = "C:\\Users\\DELL\\Desktop\\output.png";
         int imageWidth = 236;
         int imageHeight = 236;
-
+        String parentPath = this.getParentDir();
+        String pdfDir = parentPath + "/pdfFile";
+        String certDir = parentPath + "/pdfFile";
+        String picDir = parentPath + "/pdfFile";
         // 调用方法将文本转换为图片
         String base64Str = "";
         try {
-            BufferedImage image = textToImage(text, imageWidth, imageHeight);
-            base64Str = ImageUtils.image2Base64(image);
-            System.out.println(base64Str);
-        } catch (IOException | FontFormatException e) {
+            BufferedImage image = ImageUtils.base64ToImage(text);//textToImage(text, imageWidth, imageHeight);
+            String picPathNew = this.formatterImagePath(1,1,0,image,parentPath);
+            log.info("新图片地址："+picPathNew);
+            BufferedImage image2 = ImageIO.read(new File(picPathNew));
+            log.info("111");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    private String getParentDir() {
+        String tempDir = "";
+        String tempDirStr = StrUtil.isEmpty(System.getProperty("java.io.tmpdir")) ? "/temp" : System.getProperty("java.io.tmpdir");
+        String lastStr = tempDirStr.substring(tempDirStr.length() - 1, tempDirStr.length());
+        if ("\\".equals(lastStr) || "/".equals(lastStr)) {
+            tempDir = tempDirStr;
+        } else {
+            tempDir = tempDirStr + "/";
+        }
+        String path = tempDir + "temporary" + "/" + IdWorker.getId();
+        FileUtils.mkdirs(path);
+        log.info("临时文件夹路径为：" + path);
+        return path;
+    }
+
+    private String formatterImagePath(double scaleX, double scaleY, double angle, BufferedImage image, String parentPath) {
+        String name = String.valueOf(IdWorker.getId());
+        FileUtils.mkdirs(parentPath + "/pic/");
+        String filePath = parentPath + "/pic/" + name + ".png";
+        log.info("图片地址：\n"+filePath);
+        //缩放
+        try {
+            Thumbnails.of(image).outputFormat("png").scale(Math.max(scaleX,scaleY)).rotate(angle).outputQuality(1.0).toFile(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return filePath;
     }
 
     private BufferedImage textToImage(String text, int imageWidth, int imageHeight) throws IOException, FontFormatException {
@@ -102,5 +142,37 @@ public class MainService {
         g2d.dispose();
 
         return image;
+    }
+
+    private String handlePicDia(String picBase64, int width, int height) {
+        String str = "";
+        String parentPath = this.getParentDir();
+        String name = String.valueOf(IdWorker.getId());
+        FileUtils.mkdirs(parentPath + "/pic/");
+        String filePath = parentPath + "/pic/" + name + ".png";
+        BufferedImage image = ImageUtils.base64ToImage(picBase64);
+        try {
+            //缩放成指定长宽
+            Thumbnails.of(image)
+                    .size(60, 60)
+                    .keepAspectRatio(false)
+                    .toFile(new File(filePath));
+            log.info("图片已处理成长："+60+"宽："+60);
+            BufferedImage resizeImg = ImageIO.read(new File(filePath));
+            //扣成背景透明
+            BufferedImage img = ImageUtils.emptyBackground(resizeImg);
+            str = ImageUtils.image2Base64(img);
+            log.info("str:data:image/png;base64,"+str);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+//        FileUtils.deleteFilePathDir(parentPath);
+        return filePath;
+    }
+
+    public void doFile2Png(MultipartFile file) {
+        String picBase64 = "data:image/png;base64,"+FileUtils.imageFile2Base64(file);
+        String path = this.handlePicDia(picBase64,60,60);
+        log.info("图片地址："+path);
     }
 }
