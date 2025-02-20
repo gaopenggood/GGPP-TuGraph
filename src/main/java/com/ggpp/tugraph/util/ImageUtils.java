@@ -150,4 +150,33 @@ public class ImageUtils {
         return resizedImage;
     }
 
+    public static BufferedImage makeBackgroundTransparent(BufferedImage image) {
+        BufferedImage transparentImg = new BufferedImage(
+                image.getWidth(),
+                image.getHeight(),
+                BufferedImage.TYPE_INT_ARGB
+        );
+
+        // 遍历每个像素
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int rgb = image.getRGB(x, y);
+                // 提取 RGB（忽略 Alpha）
+                int red = (rgb >> 16) & 0xFF;
+                int green = (rgb >> 8) & 0xFF;
+                int blue = rgb & 0xFF;
+
+                // 如果是纯白（可调整容差，例如 red+green+blue > 750 表示接近白色）
+                if (red == 255 && green == 255 && blue == 255) {//red == 255 && green == 255 && blue == 255
+                    // 设置 Alpha 为 0（完全透明）
+                    transparentImg.setRGB(x, y, 0);
+                } else {
+                    // 否则保留原颜色（包含原始 Alpha，如果存在）
+                    transparentImg.setRGB(x, y, rgb | 0xFF000000);
+                }
+            }
+        }
+        return transparentImg;
+    }
+
 }

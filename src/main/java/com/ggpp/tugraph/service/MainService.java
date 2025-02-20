@@ -147,7 +147,7 @@ public class MainService {
     private String handlePicDia(String picBase64, int width, int height) {
         String str = "";
         String parentPath = this.getParentDir();
-        String name = String.valueOf(IdWorker.getId());
+        String name = "thumbnailator";
         FileUtils.mkdirs(parentPath + "/pic/");
         String filePath = parentPath + "/pic/" + name + ".png";
         BufferedImage image = ImageUtils.base64ToImage(picBase64);
@@ -172,7 +172,27 @@ public class MainService {
 
     public void doFile2Png(MultipartFile file) {
         String picBase64 = "data:image/png;base64,"+FileUtils.imageFile2Base64(file);
-        String path = this.handlePicDia(picBase64,60,60);
-        log.info("图片地址："+path);
+        String str1 = picBase64;
+        String str2 = picBase64;
+        String path = this.handlePicDia(str1,60,60);
+        log.info("thumbnailator图片地址："+path);
+        String path2 = this.handlePicDiaByImgscalr(str2);
+        log.info("imgscalr图片地址："+path2);
+    }
+
+    private String handlePicDiaByImgscalr(String str2) {
+        String parentPath = this.getParentDir();
+        String name1 = "base";
+        String name2 = "imgscalr";
+        FileUtils.mkdirs(parentPath + "/pic/");
+        String path = parentPath + "/pic/" + name1 + ".png";
+        String path2 = parentPath + "/pic/" + name2 + ".png";
+        // 1. 读取原图（假设输入文件为 input.png）
+        BufferedImage original = ImageUtils.base64ToImage(str2);
+
+        // 2. 将白色背景转为透明
+        BufferedImage transparent = ImageUtils.makeBackgroundTransparent(original);
+
+        return path2;
     }
 }
