@@ -172,10 +172,10 @@ public class MainService {
 
     public void doFile2Png(MultipartFile file) {
         String picBase64 = "data:image/png;base64,"+FileUtils.imageFile2Base64(file);
-        String str1 = picBase64;
+//        String str1 = picBase64;
+//        String path = this.handlePicDia(str1,60,60);
+//        log.info("thumbnailator图片地址："+path);
         String str2 = picBase64;
-        String path = this.handlePicDia(str1,60,60);
-        log.info("thumbnailator图片地址："+path);
         String path2 = this.handlePicDiaByImgscalr(str2);
         log.info("imgscalr图片地址："+path2);
     }
@@ -188,10 +188,23 @@ public class MainService {
         String path = parentPath + "/pic/" + name1 + ".png";
         String path2 = parentPath + "/pic/" + name2 + ".png";
         // 1. 读取原图（假设输入文件为 input.png）
-        BufferedImage original = ImageUtils.base64ToImage(str2);
-
-        // 2. 将白色背景转为透明
-        BufferedImage transparent = ImageUtils.makeBackgroundTransparent(original);
+        BufferedImage image = ImageUtils.base64ToImage(str2);
+        try {
+            //缩放成指定长宽
+            Thumbnails.of(image)
+                    .size(200, 200)
+                    .keepAspectRatio(false)
+                    .toFile(new File(path));
+            log.info("图片已处理成长："+60+"宽："+60);
+            BufferedImage resizeImg = ImageIO.read(new File(path));
+            //扣成背景透明
+            BufferedImage img = ImageUtils.makeBackgroundTransparent(resizeImg);//ImageUtils.emptyBackground(resizeImg);
+            String str = ImageUtils.image2Base64(img);
+            log.info("str:data:image/png;base64,"+str);
+            ImageIO.write(img, "png", new File(path2));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
 
         return path2;
     }
