@@ -3,6 +3,7 @@ package com.ggpp.tugraph.service;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ggpp.tugraph.domain.BaseUser;
 import com.ggpp.tugraph.mapper.BaseUserMapper;
 import com.ggpp.tugraph.util.FileUtils;
@@ -12,8 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
+import org.neo4j.driver.internal.InternalNode;
+import org.neo4j.driver.internal.InternalRelationship;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
+import org.neo4j.driver.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -26,9 +30,13 @@ import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -255,5 +263,87 @@ public class MainService {
     }
 
     public void changeFilePath() {
+        //查询已存在的人员名称
+        Map<String, String> userNameMap = this.findUserNameFromNeo4j();
+        String baseDir = "D:\\0 工作日志\\1 电子签章\\1111";
+        String targetDir = "D:\\0 工作日志\\1 电子签章\\pics";
+        File baseFile = new File(baseDir);
+        this.changeFileDir(baseFile,targetDir,userNameMap);
+    }
+
+    private void changeFileDir(File baseFile, String targetDir, Map<String, String> userNameMap) {
+        for(File f : baseFile.listFiles()) {
+            this.doFileMove(f,targetDir,userNameMap);
+        }
+    }
+
+    private void doFileMove(File baseFile, String targetDir, Map<String, String> userNameMap) {
+        Path basePath = baseFile.toPath();
+        String name = this.getNameFromFileName(baseFile.getName());
+        String actName = "";
+        if(name.contains("-")) {
+            int length = name.split("-").length;
+            actName = name.split("-")[length-1];
+        }else{
+            actName = name;
+        }
+        if(!userNameMap.containsKey(actName) || ObjectUtils.isEmpty(userNameMap.get(actName))) {
+            log.info("用户【"+actName+"】不在用户列表");
+        }else{
+            log.info("用户【"+actName+"】开始迁移");
+            String userName = userNameMap.get(actName);
+            String baseName = baseFile.getName();
+            String fileName = baseName.replaceAll(name, userName);
+            String targetPath = targetDir+"\\"+fileName;
+            Path path = Paths.get(targetPath);
+            try {
+                // 使用 Files.move() 方法重命名文件
+                Files.move(basePath, path);
+                log.info("文件["+name+"]重命名成功！");
+            } catch (IOException e) {
+                log.error("文件重命名失败：" + e.getMessage());
+            }
+        }
+    }
+
+    private String getNameFromFileName(String name) {
+        String fNameFront = name.split("\\.")[0];
+        return fNameFront;
+    }
+
+
+    private Map<String, String> findUserNameFromNeo4j() {
+        Map<String, String> reMap = new HashMap<>();
+        Driver driver = GraphDatabase.driver("bolt://192.168.80.168:7687", AuthTokens.basic("neo4j", "GGpp1993@"));
+        String query = "MATCH (n:base_acc_user) RETURN n.name,n.user_name";
+        log.info("查询cypher"+query);
+        try {
+            Session session = driver.session(SessionConfig.forDatabase("neo4j"));
+            Result result = session.run(query);
+            List<org.neo4j.driver.Record> records = new ArrayList<>();//result.list();
+            while(result.hasNext()) {
+//                org.neo4j.driver.Record row = result.next();
+                records.add(result.next());
+            }
+            if (!records.isEmpty()) {
+                for (org.neo4j.driver.Record record : records) {
+                    List<Pair<String, Value>> l = record.fields();
+                    String userName = "";
+                    String name = "";
+                    for(Pair<String, Value> pair : l) {
+                        if("n.name".equals(pair.key())) {
+                            name = pair.value().asString();
+                        }
+                        if("n.user_name".equals(pair.key())) {
+                            userName = pair.value().asString();
+                        }
+                    }
+                    reMap.put(name, userName);
+                }
+            }
+        }catch (Exception e){
+            log.error(e.getMessage()+"qq");
+        }
+        return reMap;
     }
 }
