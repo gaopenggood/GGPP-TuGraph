@@ -12,6 +12,11 @@ spring :
     uri: bolt://localhost:7687
     username: neo4j
     password: GGpp1993@
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

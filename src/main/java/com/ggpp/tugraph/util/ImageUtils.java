@@ -170,7 +170,7 @@ public class ImageUtils {
                 int blue = rgb & 0xFF;
 
                 // 判断是否为黑色（严格判断 R=0,G=0,B=0）
-                boolean isBlack = (red <= 100) && (green <= 100) && (blue <= 100);
+                boolean isBlack = (red <= 140) && (green <= 140) && (blue <= 140);
 
                 if (isBlack) {
                     // 如果是黑色，保留原色（设置 Alpha=255 完全不透明）

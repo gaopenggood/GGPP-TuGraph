@@ -14,11 +14,9 @@ import javax.imageio.stream.FileImageInputStream;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
@@ -476,12 +474,13 @@ public class FileUtils {
     /**
      * 解压缩文件
      */
-    public static void zipDecompression(Path file, Path targetDir) throws IOException {
+    public static void zipDecompression(Path file, Path targetDir, Charset charset) throws IOException {
         if (!Files.exists(targetDir)) {
             Files.createDirectories(targetDir);
         }
         // 创建zip对象
-        ZipFile zipFile = new ZipFile(file.toFile());
+//        ZipFile zipFile = new ZipFile(file.toFile());
+        ZipFile zipFile = new ZipFile(file.toFile(), charset);
         try {
             // 读取zip流
             try (ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(file))) {
@@ -521,19 +520,13 @@ public class FileUtils {
     public static Path doFileUpload(MultipartFile file, String pathDir) {
         Path path = null;
         try {
-            File upload = new File(pathDir);
-            String nameExt = file.getContentType();
-            nameExt = nameExt.substring(nameExt.indexOf("/") + 1);
-            String fileName = UUID.randomUUID().toString();
-            //若目标文件夹不存在，则创建
-            if (!upload.exists()) {
-                upload.mkdirs();
-            }
-            System.out.println("完整的上传路径：" + pathDir + "/" + fileName + "." + nameExt);
+            String fileName = file.getOriginalFilename();
+            String targetPath = pathDir + "/" + fileName;
+            System.out.println("完整的上传路径：" + targetPath);
             //根据srcFile大小，准备一个字节数组
             byte[] bytes = file.getBytes();
             //拼接上传路径
-            Path paths = Paths.get(pathDir + "/" + fileName + "." + nameExt);//file.getOriginalFilename()
+            Path paths = Paths.get(targetPath);//file.getOriginalFilename()
             path = paths;
             //将源文件写入目标地址
             Files.write(paths, bytes);
@@ -542,5 +535,59 @@ public class FileUtils {
             System.out.println("上传文件失败");
         }
         return path;
+    }
+
+    public static void unzip2(Path zipFilePath, Path destPath) throws IOException {
+        if (!Files.exists(destPath)) {
+            Files.createDirectories(destPath);
+        }
+
+        try (InputStream fileInputStream = Files.newInputStream(zipFilePath);
+             ZipInputStream zipInputStream = new ZipInputStream(fileInputStream)) {
+
+            ZipEntry entry;
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                Path entryPath = destPath.resolve(entry.getName());
+                if (entry.isDirectory()) {
+                    Files.createDirectories(entryPath);
+                } else {
+                    // Ensure parent directories are created
+                    Files.createDirectories(entryPath.getParent());
+                    Files.copy(zipInputStream, entryPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                zipInputStream.closeEntry();
+            }
+        }
+    }
+
+    public static void unzip3(String zipFilePath, String destDir) throws IOException {
+        File destDirectory = new File(destDir);
+        if (!destDirectory.exists()) {
+            destDirectory.mkdirs();
+        }
+        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry entry = zipIn.getNextEntry();
+            while (entry != null) {
+                String filePath = destDir + File.separator + entry.getName();
+                if (!entry.isDirectory()) {
+                    extractFile(zipIn, filePath);
+                } else {
+                    File dir = new File(filePath);
+                    dir.mkdirs();
+                }
+                zipIn.closeEntry();
+                entry = zipIn.getNextEntry();
+            }
+        }
+    }
+
+    private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            byte[] bytesIn = new byte[4096];
+            int read;
+            while ((read = zipIn.read(bytesIn)) != -1) {
+                fos.write(bytesIn, 0, read);
+            }
+        }
     }
 }

@@ -114,4 +114,14 @@ public class MainController {
     public void file2Png(@RequestBody MultipartFile file) {
         service.doFile2Png(file);
     }
+
+    @PostMapping("/file2Local")
+    public void file2Local(@RequestBody MultipartFile file) {
+        service.doFile2Local(file);
+    }
+
+    @PostMapping("/changeFilePath")
+    public void changeFilePath() {
+        service.changeFilePath();
+    }
 }

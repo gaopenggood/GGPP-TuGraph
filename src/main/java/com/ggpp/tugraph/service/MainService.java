@@ -16,6 +16,7 @@ import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,9 @@ import java.awt.image.BufferedImage;
 import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -192,7 +196,7 @@ public class MainService {
         try {
             //缩放成指定长宽
             Thumbnails.of(image)
-                    .size(200, 200)
+                    .size(60, 60)
                     .keepAspectRatio(false)
                     .toFile(new File(path));
             log.info("图片已处理成长："+60+"宽："+60);
@@ -207,5 +211,49 @@ public class MainService {
         }
 
         return path2;
+    }
+
+    public void doFile2Local(MultipartFile file) {
+        String msg = "";
+        //校验文件类型
+        String fileName = file.getOriginalFilename();
+        if(!fileName.contains(".") || !"zip".equals(fileName.split("\\.")[1])) {
+            msg = "文件类型不正确，请检查后重新上传";
+        }
+        String parentPath = this.getParentDir();
+        //解压文件
+        String targetPath = parentPath+"/"+ IdWorker.getId();
+        FileUtils.mkdirs(targetPath);
+        Path base = FileUtils.doFileUpload(file, parentPath);
+        System.out.println("压缩包地址："+base.toString());
+        Path target = new File(targetPath).toPath();
+        //解压缩
+        try {
+            FileUtils.zipDecompression(base, target, Charset.forName("UTF-8"));
+            log.info("zip文件解压成功！路径：" + targetPath);
+        } catch (Exception e) {
+            log.error("文件解压缩失败!"+e.getMessage());
+            msg = "文件解压缩失败！";
+        }
+        if(!ObjectUtils.isEmpty(msg)) {
+            FileUtils.deleteFilePathDir(parentPath);
+        }
+        //解析文件名和图片
+        File files = new File(targetPath);
+        List<File> listFiles = new ArrayList<>();
+        this.getFileList(files, listFiles);
+        log.info("共【"+listFiles.size()+"】张印章图片");
+    }
+    private void getFileList(File files, List<File> fileList) {
+        for(File f : files.listFiles()) {
+            if(f.isFile()) {
+                fileList.add(f);
+            }else{
+                this.getFileList(f, fileList);
+            }
+        }
+    }
+
+    public void changeFilePath() {
     }
 }
