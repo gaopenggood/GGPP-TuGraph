@@ -159,6 +159,8 @@ public class ImageUtils {
         );
 
         // 3. 遍历每个像素点
+        int i=0;
+        int j=0;
         for (int y = 0; y < inputImage.getHeight(); y++) {
             for (int x = 0; x < inputImage.getWidth(); x++) {
                 // 获取当前像素的 RGB 值
@@ -168,9 +170,18 @@ public class ImageUtils {
                 int red = (rgb >> 16) & 0xFF;
                 int green = (rgb >> 8) & 0xFF;
                 int blue = rgb & 0xFF;
+                int alpha = (rgb >> 24) & 0xFF;
 
+                // 如果alpha值为0，表示该像素完全透明
+                if (alpha == 0) {
+                    System.out.println("透明"+i);
+                    i++;
+                    continue;
+                }
+                System.out.println("非透明"+j);
+                j++;
                 // 判断是否为黑色（严格判断 R=0,G=0,B=0）
-                boolean isBlack = (red <= 140) && (green <= 140) && (blue <= 140);
+                boolean isBlack = (red <= 120) && (green <= 120) && (blue <= 120);
 
                 if (isBlack) {
                     // 如果是黑色，保留原色（设置 Alpha=255 完全不透明）

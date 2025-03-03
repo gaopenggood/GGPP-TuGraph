@@ -202,18 +202,29 @@ public class MainService {
         // 1. 读取原图（假设输入文件为 input.png）
         BufferedImage image = ImageUtils.base64ToImage(str2);
         try {
-            //缩放成指定长宽
-            Thumbnails.of(image)
+//            //扣成背景透明
+//            BufferedImage img = ImageUtils.makeBackgroundTransparent(image);//ImageUtils.emptyBackground(resizeImg);
+//            //缩放成指定长宽
+//            Thumbnails.of(img)
+//                    .size(60, 60)
+//                    .keepAspectRatio(false)
+//                    .toFile(new File(path));
+//            log.info("图片已处理成长："+60+"宽："+60);
+//            BufferedImage resizeImg = ImageIO.read(new File(path));
+//            ImageIO.write(resizeImg, "png", new File(path2));
+//            log.info("path1:"+path);
+//            log.info("path2:"+path2);
+
+            BufferedImage img = ImageUtils.makeBackgroundTransparent(image);
+            Thumbnails.of(img)
                     .size(60, 60)
                     .keepAspectRatio(false)
                     .toFile(new File(path));
-            log.info("图片已处理成长："+60+"宽："+60);
             BufferedImage resizeImg = ImageIO.read(new File(path));
+            log.info("图片已处理成长："+60+"宽："+60);
             //扣成背景透明
-            BufferedImage img = ImageUtils.makeBackgroundTransparent(resizeImg);//ImageUtils.emptyBackground(resizeImg);
-            String str = ImageUtils.image2Base64(img);
+            String str = ImageUtils.image2Base64(resizeImg);
             log.info("str:data:image/png;base64,"+str);
-            ImageIO.write(img, "png", new File(path2));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
