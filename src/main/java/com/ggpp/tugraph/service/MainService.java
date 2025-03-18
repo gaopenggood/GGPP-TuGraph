@@ -1,10 +1,12 @@
 package com.ggpp.tugraph.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ggpp.tugraph.domain.BaseUser;
+import com.ggpp.tugraph.domain.dto.MainDto;
+import com.ggpp.tugraph.listener.ExcelDataListener;
 import com.ggpp.tugraph.mapper.BaseUserMapper;
 import com.ggpp.tugraph.util.FileUtils;
 import com.ggpp.tugraph.util.ImageUtils;
@@ -13,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
-import org.neo4j.driver.internal.InternalNode;
-import org.neo4j.driver.internal.InternalRelationship;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.neo4j.driver.util.Pair;
@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -35,12 +34,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
 public class MainService {
+
+    @Resource
+    private DbService db;
 
     @Resource
     private BaseUserMapper baseUserMapper;
@@ -275,20 +275,37 @@ public class MainService {
 
     public void changeFilePath() {
         //查询已存在的人员名称
-        Map<String, String> userNameMap = this.findUserNameFromNeo4j();
-        String baseDir = "D:\\0 工作日志\\1 电子签章\\1111";
-        String targetDir = "D:\\0 工作日志\\1 电子签章\\pics";
+        Map<String, String> userNameMap = this.findUserNameFromDb();
+        String baseDir = "D:\\0 工作日志\\1 电子签章\\fileReplace\\1";
+        String targetDir = "D:\\0 工作日志\\1 电子签章\\fileReplace\\3";
         File baseFile = new File(baseDir);
-        this.changeFileDir(baseFile,targetDir,userNameMap);
+        String nameAll = "";
+        this.changeFileDir(baseFile,targetDir,userNameMap,nameAll);
+        log.info("错误名单"+nameAll);
     }
 
-    private void changeFileDir(File baseFile, String targetDir, Map<String, String> userNameMap) {
+    private Map<String, String> findUserNameFromDb() {
+        List<Map<String, Object>> list = db.doGet("select id,name,user_name from base_acc_user");
+        Map<String, String> map = new HashMap<>();
+        for(Map<String, Object> map1 : list) {
+            if(ObjectUtils.isEmpty(map1.get("name"))
+            || ObjectUtils.isEmpty(map1.get("user_name"))) {
+                continue;
+            }
+            String name = map1.get("name").toString();
+            String userName = map1.get("user_name").toString();
+            map.put(name, userName);
+        }
+        return map;
+    }
+
+    private void changeFileDir(File baseFile, String targetDir, Map<String, String> userNameMap, String nameAll) {
         for(File f : baseFile.listFiles()) {
-            this.doFileMove(f,targetDir,userNameMap);
+            this.doFileMove(f,targetDir,userNameMap,nameAll);
         }
     }
 
-    private void doFileMove(File baseFile, String targetDir, Map<String, String> userNameMap) {
+    private void doFileMove(File baseFile, String targetDir, Map<String, String> userNameMap, String nameAll) {
         Path basePath = baseFile.toPath();
         String name = this.getNameFromFileName(baseFile.getName());
         String actName = "";
@@ -299,6 +316,7 @@ public class MainService {
             actName = name;
         }
         if(!userNameMap.containsKey(actName) || ObjectUtils.isEmpty(userNameMap.get(actName))) {
+            nameAll += ",'"+actName+"'";
             log.info("用户【"+actName+"】不在用户列表");
         }else{
             log.info("用户【"+actName+"】开始迁移");
@@ -312,6 +330,7 @@ public class MainService {
                 Files.move(basePath, path);
                 log.info("文件["+name+"]重命名成功！");
             } catch (IOException e) {
+                nameAll += ",'"+actName+"'";
                 log.error("文件重命名失败：" + e.getMessage());
             }
         }
@@ -356,5 +375,23 @@ public class MainService {
             log.error(e.getMessage()+"qq");
         }
         return reMap;
+    }
+
+    public void getExcelData(MultipartFile file) {
+        try {
+            this.readExcel(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public List<MainDto> readExcel(MultipartFile file) throws IOException {
+        List<String> fieldNames = Arrays.asList("Field1", "Field2", "Field3"); // 假设字段名已知
+        ExcelDataListener listener = new ExcelDataListener(fieldNames);
+
+        EasyExcel.read(file.getInputStream(), listener).sheet().doRead();
+        List<MainDto> list = listener.getBudgets();
+        return list;
     }
 }

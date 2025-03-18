@@ -124,4 +124,9 @@ public class MainController {
     public void changeFilePath() {
         service.changeFilePath();
     }
+
+    @PostMapping("/excel")
+    public void getExcelData(@RequestBody MultipartFile file) {
+        service.getExcelData(file);
+    }
 }
