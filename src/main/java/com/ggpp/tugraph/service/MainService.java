@@ -2,22 +2,35 @@ package com.ggpp.tugraph.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ggpp.tugraph.domain.BaseUser;
+import com.ggpp.tugraph.domain.dto.BudgetDto;
 import com.ggpp.tugraph.domain.dto.MainDto;
 import com.ggpp.tugraph.listener.ExcelDataListener;
 import com.ggpp.tugraph.mapper.BaseUserMapper;
 import com.ggpp.tugraph.util.FileUtils;
 import com.ggpp.tugraph.util.ImageUtils;
 import jakarta.annotation.Resource;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.neo4j.driver.util.Pair;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -26,8 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -388,10 +400,231 @@ public class MainService {
 
     public List<MainDto> readExcel(MultipartFile file) throws IOException {
         List<String> fieldNames = Arrays.asList("Field1", "Field2", "Field3"); // 假设字段名已知
-        ExcelDataListener listener = new ExcelDataListener(fieldNames);
+        ExcelDataListener listener = new ExcelDataListener(1,2,fieldNames);
 
         EasyExcel.read(file.getInputStream(), listener).sheet().doRead();
         List<MainDto> list = listener.getBudgets();
         return list;
+    }
+
+    public void doExport(HttpServletResponse response) throws IOException {
+        String name = "aaaa";
+        String suffix = "xlsx";
+        String parentDir = this.getParentDir();
+        FileUtils.mkdirs(parentDir);
+        String fileName = parentDir+"/"+name+"."+suffix;
+        log.info("文件地址："+fileName);
+
+        List<List<Object>> data = new ArrayList<>();
+        data.add(Arrays.asList("001", "项目A", 100, 200, 300, 400, 500, 600, 700));
+        data.add(Arrays.asList("002", "项目B", 150, 250, 350, 450, 550, 650, 750));
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=xxxx.xlsx");
+
+
+        try (Workbook finalWorkbook = new XSSFWorkbook();
+             ServletOutputStream outputStream = response.getOutputStream()) {
+
+            Sheet sheet = finalWorkbook.createSheet("Sheet1");
+
+            // 创建表头行
+            Row row0 = sheet.createRow(0);
+            Row row1 = sheet.createRow(1);
+
+            // 设置第一行和第二行的合并单元格及表头值
+            row0.createCell(0).setCellValue("编号");
+            row0.createCell(1).setCellValue("名称");
+            sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
+            sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
+
+            row0.createCell(2).setCellValue("概算费用");
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 2, 8));
+
+            String[] subHeaders = {"A", "B", "C", "D", "E", "F", "G"};
+            for (int i = 0; i < subHeaders.length; i++) {
+                row1.createCell(2 + i).setCellValue(subHeaders[i]);
+            }
+
+            // 写入数据（从第三行开始）
+            int startRow = 2;
+            for (int i = 0; i < data.size(); i++) {
+                Row dataRow = sheet.createRow(startRow + i);
+                List<Object> rowData = data.get(i);
+                for (int j = 0; j < rowData.size(); j++) {
+                    dataRow.createCell(j).setCellValue(rowData.get(j).toString());
+                }
+            }
+
+            // 写入文件
+            finalWorkbook.write(outputStream);
+            outputStream.flush();
+//            finalWorkbook.write(finalFos);
+//            finalFos.close();
+//            finalWorkbook.close();
+
+        }
+
+//        try (Workbook workbook = new XSSFWorkbook();
+//             FileOutputStream fos = new FileOutputStream(fileName)) {
+//
+//            Sheet sheet = workbook.createSheet("Sheet1");
+//
+//            // 创建表头行
+//            Row row0 = sheet.createRow(0);
+//            Row row1 = sheet.createRow(1);
+//
+//            // 设置第一行和第二行的合并单元格及表头值
+//            row0.createCell(0).setCellValue("编号");
+//            row0.createCell(1).setCellValue("名称");
+//            sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
+//            sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
+//
+//            row0.createCell(2).setCellValue("概算费用");
+//            sheet.addMergedRegion(new CellRangeAddress(0, 0, 2, 8));
+//
+//            String[] subHeaders = {"A", "B", "C", "D", "E", "F", "G"};
+//            for (int i = 0; i < subHeaders.length; i++) {
+//                row1.createCell(2 + i).setCellValue(subHeaders[i]);
+//            }
+//
+//            // 将工作簿写入文件
+//            workbook.write(fos);
+//        }
+//
+//
+//        // Step 2: 使用 EasyExcel 写数据（从第三行开始）
+//        List<List<Object>> data = new ArrayList<>();
+//        data.add(Arrays.asList("001", "项目A", 100, 200, 300, 400, 500, 600, 700));
+//        data.add(Arrays.asList("002", "项目B", 150, 250, 350, 450, 550, 650, 750));
+//
+//        try (FileOutputStream fos = new FileOutputStream(fileName)) {
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+//        List<BudgetDto> dataList = parseJsonData();
+//        List<List<String>> dynamicHead = getDynamicHead();
+//        writeExcel(dynamicHead, fileName);
+    }
+
+    private static void writeExcel(List<List<String>> head, String fileName) {
+        EasyExcel.write(fileName)
+                .head(head)
+                .sheet("概算编制明细")
+                .doWrite(getDataList());
+    }
+
+    private static List<List<String>> getDataList() {
+        List<List<String>> dataList = new ArrayList<>();
+
+        List<String> row = new ArrayList<>();
+
+//        row.add("编号");
+//        row.add("概算名称");
+//
+//        List<String> initFeeNode = List.of("服务费","设备费","建设费","安装费","xxx1","其他费","合计");
+
+        row.add("1");
+        row.add("1");
+
+//                JsonNode initFeeNode = dataItem.get("initFee");
+        List<String> initFeeNode = List.of("222","333","444","555","666","777","888");
+
+        row.addAll(initFeeNode);
+        dataList.add(row);
+        return dataList;
+    }
+
+    private List<List<String>> getDynamicHead() {
+        List<List<String>> head = new ArrayList<>();
+        head.add(List.of("","","概算费用","","","","","",""));
+        head.add(List.of("编号",""));
+        head.add(List.of("概算名称",""));
+        head.add(List.of("编号", "概算名称","服务费","设备费","建设费","安装费","xxx1","其他费","合计"));
+
+        // 假设动态字段名称已经通过某种方式获取，这里简化处理直接从第一个数据项中获取
+//        JsonNode dataNode = rootNode.get("data");
+//        if (dataNode != null && dataNode.isArray() && !dataNode.isEmpty()) {
+//            JsonNode firstDataItem = dataNode.get(0);
+//            JsonNode initFeeNode = firstDataItem.get("initFee");
+//            if (initFeeNode != null) {
+//                initFeeNode.fieldNames().forEachRemaining(fieldName -> {
+//                    head.add(List.of(fieldName));
+//                });
+//            }
+//        }
+        return head;
+    }
+
+    private static List<BudgetDto> parseJsonData() {
+        // 这里假设你已经有一个方法来解析JSON数据并转换为List<Map<String, Object>>格式
+        // 为了简化示例，我们直接返回一个示例数据列表
+        List<BudgetDto> dataList = new ArrayList<>();
+
+        // 示例数据
+//        BudgetDto item1 = Map.of(
+//                "code", "1",
+//                "cbsName", "1",
+//                "initFee.服务费", 0,
+//                "initFee.设备费", 555,
+//                "initFee.建筑费", 0,
+//                "initFee.安装费", 0,
+//                "initFee.xxx1", 0,
+//                "initFee.其它费", 0,
+//                "initFee.total", 555
+//        );
+        Map<String, Object> map = new HashMap<>();
+        map.put("code","1");
+        map.put("cbsName","1");
+        map.put("服务费",0);
+        map.put("设备费",555);
+        map.put("建筑费",0);
+        map.put("安装费",0);
+        map.put("xxx1",0);
+        map.put("其它费",0);
+        map.put("total",555);
+        BudgetDto dto = new BudgetDto();
+        dto.setCode("1");
+        dto.setCbsName("1");
+        dto.setFees(map);
+        dataList.add(dto);
+
+        // 添加更多数据项...
+
+        return dataList;
+    }
+
+    public void jsonTest() {
+        String json = "{\n" +
+                "    \"_code\": 200,\n" +
+                "    \"msg\": \"\",\n" +
+                "    \"data\": {\n" +
+                "        \"施工\": [\n" +
+                "            \"施工\",\n" +
+                "            \"施工许可证\"\n" +
+                "        ],\n" +
+                "        \"项目\": [\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.valueToTree(json);
+            // 将 JSON 字符串解析为一个 Map
+            Map<String, Object> jsonMap = objectMapper.readValue(json, Map.class);
+
+            // 提取 data 对象
+            @SuppressWarnings("unchecked")
+            Map<String, List<String>> dataMap = (Map<String, List<String>>) jsonMap.get("data");
+
+            // 输出结果
+            System.out.println(dataMap);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
