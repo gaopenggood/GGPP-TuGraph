@@ -44,8 +44,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -362,13 +366,13 @@ public class MainService {
         try {
             Session session = driver.session(SessionConfig.forDatabase("neo4j"));
             Result result = session.run(query);
-            List<org.neo4j.driver.Record> records = new ArrayList<>();//result.list();
+            List<Record> records = new ArrayList<>();//result.list();
             while(result.hasNext()) {
 //                org.neo4j.driver.Record row = result.next();
                 records.add(result.next());
             }
             if (!records.isEmpty()) {
-                for (org.neo4j.driver.Record record : records) {
+                for (Record record : records) {
                     List<Pair<String, Value>> l = record.fields();
                     String userName = "";
                     String name = "";
@@ -626,5 +630,71 @@ public class MainService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void getLottery() {
+        List<String> bigLottoDays = new ArrayList<>(List.of("MONDAY,WEDNESDAY","SATURDAY"));
+        List<String> doubleColorBallDays = new ArrayList<>(List.of("TUESDAY","THURSDAY","SUNDAY"));
+        // 获取当前日期
+        LocalDate currentDate = LocalDate.now();
+
+        // 获取当前是星期几
+        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
+        String num = "";
+        switch (dayOfWeek) {
+            case MONDAY:
+                num = this.getBigLotto();
+            case TUESDAY:
+            case WEDNESDAY:
+                num = this.getBigLotto();
+            case THURSDAY:
+            case FRIDAY:
+            case SATURDAY:
+                num = this.getBigLotto();
+            case SUNDAY:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + dayOfWeek);
+        }
+        log.info("今天是"+dayOfWeek+"建议号码"+num);
+    }
+
+    private String getBigLotto() {
+        // 生成前区号码(1-35选5个不重复号码)
+        List<Integer> frontNumbers = generateRandomNumbers(1, 35, 5);
+        // 生成后区号码(1-12选2个不重复号码)
+        List<Integer> backNumbers = generateRandomNumbers(1, 12, 2);
+
+        // 格式化输出
+        String frontStr = frontNumbers.stream()
+                .sorted()
+                .map(String::valueOf)
+                .collect(Collectors.joining(" "));
+
+        String backStr = backNumbers.stream()
+                .sorted()
+                .map(String::valueOf)
+                .collect(Collectors.joining(" "));
+
+        return frontStr + " | " + backStr;
+    }
+
+    private static List<Integer> generateRandomNumbers(int min, int max, int count) {
+        if (count > (max - min + 1)) {
+            throw new IllegalArgumentException("无法生成不重复的随机数，范围太小");
+        }
+
+        List<Integer> numbers = IntStream.rangeClosed(min, max)
+                .boxed()
+                .collect(Collectors.toList());
+
+        // 随机打乱顺序
+        Collections.shuffle(numbers, new Random());
+
+        // 取前count个
+        return numbers.stream()
+                .limit(count)
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

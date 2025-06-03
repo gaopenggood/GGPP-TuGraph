@@ -144,4 +144,9 @@ public class MainController {
     public void JsonTest() {
         service.jsonTest();
     }
+
+    @GetMapping("lottery")
+    public void getLottery() {
+        service.getLottery();
+    }
 }
