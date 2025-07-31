@@ -2,8 +2,6 @@ package com.ggpp.tugraph.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.write.builder.ExcelWriterBuilder;
-import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,7 +28,6 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.neo4j.driver.util.Pair;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -57,6 +54,8 @@ public class MainService {
 
     @Resource
     private DbService db;
+
+    private static final Random random = new Random();
 
     @Resource
     private BaseUserMapper baseUserMapper;
@@ -644,19 +643,48 @@ public class MainService {
         switch (dayOfWeek) {
             case MONDAY:
                 num = this.getBigLotto();
+                break;
             case TUESDAY:
+                num = this.generateDoubleColorBall();
+                break;
             case WEDNESDAY:
                 num = this.getBigLotto();
+                break;
             case THURSDAY:
+                num = this.generateDoubleColorBall();
+                break;
             case FRIDAY:
             case SATURDAY:
                 num = this.getBigLotto();
+                break;
             case SUNDAY:
+                num = this.generateDoubleColorBall();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + dayOfWeek);
         }
         log.info("今天是"+dayOfWeek+"建议号码"+num);
+    }
+
+    public String generateDoubleColorBall() {
+        // 生成红球（1-33选6个不重复数字，排序）
+        List<Integer> redBalls = random.ints(1, 33 + 1)
+                .distinct()
+                .limit(6)
+                .sorted()
+                .boxed()
+                .toList();
+
+        // 生成蓝球（1-16选1个）
+        int blueBall = random.nextInt(16) + 1;
+
+        // 格式化输出
+        String frontStr = redBalls.stream()
+                .sorted()
+                .map(String::valueOf)
+                .collect(Collectors.joining(" "));
+
+        return frontStr + " | " + blueBall;
     }
 
     private String getBigLotto() {
