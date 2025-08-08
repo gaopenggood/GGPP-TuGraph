@@ -58,6 +58,9 @@ public class MainService {
     private static final Random random = new Random();
 
     @Resource
+    private BaseUserMapper userMapper;
+
+    @Resource
     private BaseUserMapper baseUserMapper;
     public Object getDataFromDB() {
         List<BaseUser> list = baseUserMapper.selectList(new LambdaQueryWrapper<BaseUser>()
@@ -724,5 +727,11 @@ public class MainService {
                 .limit(count)
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    public void getUserData() {
+        List<BaseUser> list = userMapper.selectList(new LambdaQueryWrapper<BaseUser>()
+                .eq(BaseUser::getId, 1));
+        log.info("AAA");
     }
 }

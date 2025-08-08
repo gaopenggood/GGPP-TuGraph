@@ -149,4 +149,9 @@ public class MainController {
     public void getLottery() {
         service.getLottery();
     }
+
+    @GetMapping("/userData")
+    public void getUserData() {
+        service.getUserData();
+    }
 }
