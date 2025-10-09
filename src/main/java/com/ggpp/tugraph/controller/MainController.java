@@ -154,4 +154,9 @@ public class MainController {
     public void getUserData() {
         service.getUserData();
     }
+
+    @PostMapping("/doDataInsertTest")
+    public void doDataInsertTest(@RequestBody JsonNode params) {
+        log.info("aaa");
+    }
 }

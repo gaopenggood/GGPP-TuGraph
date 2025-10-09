@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ggpp.tugraph.mapper.GameCdKeyMapper">
+
+    <resultMap id="BaseResultMap" type="com.ggpp.tugraph.domain.GameCdKey">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="gameId" column="game_id" jdbcType="BIGINT"/>
+        <result property="code" column="code" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="cdKey" column="ck_key" jdbcType="VARCHAR"/>
+        <result property="gameName" column="game_name" jdbcType="VARCHAR"/>
+        <result property="gameCode" column="game_code" jdbcType="VARCHAR"/>
+        <result property="workFlag" column="work_flag" jdbcType="BIGINT"/>
+    </resultMap>
+
+</mapper>
