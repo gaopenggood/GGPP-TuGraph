@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Set;
 
@@ -158,5 +159,16 @@ public class MainController {
     @PostMapping("/doDataInsertTest")
     public void doDataInsertTest(@RequestBody JsonNode params) {
         log.info("aaa");
+    }
+
+    @GetMapping("/numberText")
+    public void doNumberText() {
+        double d1 = 0.1;
+        double d2 = 0.2;
+        double d3 = d1 + d2;
+        BigDecimal b1 = new BigDecimal(d1);
+        BigDecimal b2 = new BigDecimal(d2);
+        BigDecimal b3 = b1.add(b2);
+        log.info("DOUBLE SUM {} \n BIGDECIMAL SUM {}", d3, b3);
     }
 }

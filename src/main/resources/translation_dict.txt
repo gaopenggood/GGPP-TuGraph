@@ -1,0 +1,713 @@
+用户	User
+组织	Company
+部门	Department
+岗位	Position
+权限	Authorization
+菜单	Menu
+模块	Module
+服务	Service
+数据源	Data Source
+配置	Configuration
+值集	Value Set
+模型	Model
+字段	Field
+属性	Property
+关系	Relationship
+扩展方法	Extended Method
+事件	Event
+插槽	Slot
+方法	Function
+组件	Component
+业务组件	Assembly
+视图	View
+过滤器	Filter
+表单	Form
+页面	Page
+系统	System
+文件	File
+存储	Storage
+上传	Upload
+日志	Log
+模板	Template
+版本	Version
+计量单位	Unit
+项目	Project
+扩展	Extension
+附件	Attachment
+关联	Versus
+数据表	Data Table
+数据模型	Data Model
+数据集	Data Set
+对象	Object
+SQL 对象	SQL Object
+标签	Label
+循环方式	Loop
+水印	Watermark
+容量	Capacity
+地图	Map
+授权范围	Authorization Scope
+证书	Certificate
+印章	Seal
+图片	Picture
+任务	Task
+日志	Log
+智能体	Agent
+股权	Bond
+变更	Change
+人员	Human
+汇率	Exchange Rate
+货币	Currency
+工作日历	Calendar
+节假日	Holidays
+群组	Group
+成员	Member
+消息	Message
+审批	Approval
+合同	Contract
+发票	Invoice
+费用	Fee
+管理网络	Management Network
+管理网络节点	Node
+参数配置	Config
+系统	System
+用户界面	User Interface
+账户	Account
+详情	Detail
+记录	Record
+应用	Application
+信息	Information
+数据	Data
+编号	Code
+序列号	Serial
+对比	Versus
+分组	Group
+范围	Scope
+授权	Authorization
+规则	Rule
+人工智能	Artificial Intelligence
+光学字符识别	Optical Character Recognition
+即时通讯	Instant Messaging
+会话	Session
+接口	API
+在线	Online
+数据中心	Data Center
+指标	Index
+报表	Report
+监听	Listen
+签章	Sign
+助手	Assistant
+公司	Company
+值	Value
+单位	Unit
+域	Domain
+参数	Parameter
+编码	Code
+客户端	Client
+表格	Grid
+仪表板	Dashboard
+映射	Mapping
+同步	Synchronize
+循环	Loop
+引擎	Engine
+编辑	Edit
+组	Group
+业务	Business
+认证	OAuth
+语言	Language
+操作	Operation
+执行	Execute
+人工	Human
+导入	Import
+导出	Export
+类型	Type
+状态	Status
+条目	Item
+通行证	Pass
+界面	User Interface
+筛选	Filter
+仪表盘	Dashboard
+技术	Technology
+图纸	Drawing
+交底	Disclose
+施工	Construct
+人员	Personnel
+团队	Team
+外部	External
+节点	Node
+网络	Network
+组织网络	Company Network
+人力资源	Human Resource
+经理	Manager
+任命	Appointment
+调整	Adjustment
+组建团队	Team Building
+甲方	Party A
+乙方	Party B
+代理	Agent
+签名	Signature
+考勤	Attendance
+培训	Training
+考核	Assessment
+奖惩	Reward and Punishment
+护照	Passport
+出国	Abroad
+教育	Education
+家庭	Family
+技能	Skill
+职称	Job Title
+员工	Employee
+打卡	Clock In
+绩效	Performance
+作者	Author
+文档	Document
+目录	Directory
+市场	Marketing
+客户	Customer
+招标	Tender
+中标	Bid Award
+立项	Establish
+分包	Subcontract
+供应商库	Repository
+评价	Evaluation
+收入	Income
+支出	Expense
+发票	Invoice
+付款	Payment
+索赔	Claim
+成本	Cost
+奖金	Bonus
+产值	Output
+统计	Statistics
+投标	Bidding
+报价	Quotation
+预算	Budget
+费用	Expense
+销售	Sales
+采购	Purchase
+采购合同	Purchase Contract
+供应商	Supplier
+财务	Finance
+收款	Receipt
+税	Tax
+金额	Amount
+保函	Letter of Guarantee
+保证金	Margin
+计划	Plan
+方案	Proposal
+分析	Analysis
+需求	Demand
+跟踪	Tracking
+申请	Application
+结算	Settlement
+台账	Ledger
+汇总	Summary
+里程碑	Milestone
+识别	Recognition
+工作	Work
+价值	Value
+到账	Into Account
+开票	Make Invoice
+收到	Received
+业务流程	Business Process Management
+工作流	Workflow
+定义	Definition
+实例	Instance
+流程	Flow
+反馈	Feedback
+分配	Assign
+升级	Upgrade
+批次	Batch
+选择器	Selector
+库	Library
+年度	Year
+月度	Month
+周期	Cycle
+日历	Calendar
+节日	Festival
+休假	Holiday
+基础	Base
+国家	Country
+级别	Level
+公告	Announcement
+通知	Notice
+工单	Work Order
+联系	Contact
+关键字	Keyword
+元数据	Metadata
+组装	Assembly
+银行	Bank
+国内	Domestic
+海外	Overseas
+本地	Local
+黑名单	Blacklist
+限额	Limit
+专业	Professional
+分支	Branch
+导入	Import
+开发	Development
+测试	Test
+安全	Security
+检查	Check
+注册	Register
+邮件	Email
+账号	Account
+假日	Holiday
+短信	SMS
+OAuth 客户端	OAuth Client
+启用	Enable
+异步	Async
+错误	Error
+常用	Common Use
+选择	Select
+地址	Address
+债券	Bond
+行政区划	Administrative Division
+相册	Album
+照片	Photo
+阈值	Threshold
+整体	Overall
+轨迹	Track
+完成	Complete
+意见	Opinion
+分数	Score
+索引	Index
+关键	Key
+可视化	Visual
+冲销	Write Off
+待处理	Pending
+服务确认	Service Confirmation
+开具	Issuance
+核对	Check
+协助事项	Assistance Matters
+连接	Connect
+举措	Initiatives
+月度分解	Monthly Breakdown
+初始化	Initialization
+返回	Return
+旧项目	Old Project
+标识	Flag
+子项	Sub Item
+货物	Goods
+物料	Material
+物资	Supplies
+设备	Equipment
+运输	Transport
+发货	Shipment
+仓储	Warehousing
+到货	Arrival
+报关	Customs Declaration
+港口	Port
+退税	Tax Refund
+入库	Warehousing
+出库	Withdraw
+工具	Tool
+借用	Loan
+归还	Return
+调拨	Transfer
+备件	Spare Parts
+耗材	Consumables
+检验	Inspection
+放行	Release
+拆箱	Unpacking
+集港	Port Consolidation
+离厂	Leave Factory
+委托	Entrusted
+激活	Activate
+目的地	Destination
+设计	Design
+勘察	Survey
+输入	Input
+评审	Review
+发布	Publish
+控制	Control
+规格书	Specification
+初步	Preliminary
+内部	Internal
+机械	Mechanical
+进场	site entry
+退场	Exit
+开工	Commence
+停工	Suspension
+复工	Resumption
+竣工	Completion
+移交	Handover
+代表	Representative
+许可证	License
+周报	Weekly Report
+月报	Monthly Report
+质量	Quality
+健康安全环境	Health Safety Environment
+整改	Rectification
+验收	Acceptance
+见证	Witness
+监督	Supervision
+不符合项	Non-Conformance Report
+计量	Measurement
+调试	Debug
+试运行	Trial Run
+运行	Operation
+维护	Maintenance
+缺陷	Defect
+风险	Risk
+应急	Emergency
+事故	Incident
+环境	Environment
+危险	Dangerous
+满意度	Satisfaction
+质量检验模板	quality item template
+质量项	Quality Item
+质量分解结构	Quality Breakdown Structure
+巡检	Inspection
+检测	Test
+问题	Issue
+材料	Material
+场景	Scene
+特性	Characteristic
+观察	Observation
+隐患	Hidden Danger
+目标	Target
+披露	Disclosure
+违规	Violation
+凭证	Credential
+设备检查	Device Check
+教育培训	Education
+考试	Examination
+试卷	Paper
+题目	Question
+答案	Answer
+题库	Bank
+出勤	Attendance
+考勤设置	Clock Setting
+天数	Days
+假期	Holiday
+请假	Leave
+出差	Field Work
+调班	Adjust
+缺勤	Absence
+补填	Supplement Fill
+环保	environment protection
+作业	Work
+摄像头	Camera
+区域	Area
+消除	Eliminate
+管理	Manage
+案件	Case
+法务	Legal
+函件	Letter
+收函	Receive Letter
+发函	Send Letter
+预警	Warning
+和解	Reconcile
+重大专项	Major Special
+协调	Coordinate
+工程量清单	Bill of Quantities
+支付	Payment
+预付款	Advance Payment
+签证	Visa
+计价	Valuation
+终止	Termination
+质保金	Retention
+扣款	Deduction
+罚款	Penalty
+交易	Trade
+清单	List
+应收账款	Receivables
+信用	Credit
+印花税	Stamp Duty
+计提	Provision
+预览	Preview
+资本	Capital
+分摊	Apportionment
+确认	Confirmation
+借款	Loan
+还款	Repayment
+代扣	Withhold
+销售确认	Sales Recognition
+POC	Percentage of Completion
+战略指标	Strategic Indicators
+协议	Agreement
+暂停	Suspension
+退出	Exit
+后评估	Post Evaluation
+应急储备	Emergency Reserve
+边界条件	Boundary Conditions
+股东	Shareholders
+决策	Decision
+政府审批	Government Approval
+储备资金	Reserve Fund
+分解	Resolve
+授权库	Auth Library
+逻辑标签	Logical Tag
+自定义标签	Custom Tag
+分级指标	Grading Indicator
+评分规则	Scoring Rule
+负面	Negative
+车辆	Vehicle
+国家标准	National Standard
+行业	Industry
+规模	Scale
+课程	Course
+国家地区	Country Region
+季度	Quarter
+安排	Arrange
+库存	Inventory
+数据分类	Data Classification
+角色权限	Role Permission
+主项目	Main
+子项目	Sub
+内部权益	Internal Equity
+建设	Build
+工程	Engineering
+进度	Progress
+数量	Quantity
+周	Week
+月	Month
+年	Year
+日	Day
+阶段	Phase
+评估	Evaluation
+竣工验收	Completion Acceptance
+预验收	Pre-acceptance
+关闭	Close
+复核审批	Review Approval
+劳动力	Labor
+产品	Product
+报告	Report
+准备	Ready
+输出	Output
+大纲	Outline
+效果	Effect
+适用	Applicable
+旁站	Side
+前期	Preliminary
+大型机械	Large
+中型机械	Middle
+主要材料	Major
+内容	Content
+成本类型	Cost Type
+成本分解结构	Cost Breakdown Structure
+备注	Note
+份额	Share
+OCR 识别	Optical Character Recognition
+词汇	Words
+承包商	Contractor
+分包商	Subcontractor
+管理人员	Manager
+组织明细	Org Detail
+建筑安全	Building Safety
+应用程序	Application
+档案	Archive
+建筑信息模型	Building Information Modeling
+成本分解结构	Cost Breakdown Structure
+预估	Estimate
+交付物	Deliverable
+明细	Detail
+设备	Equipment
+施工	Construction
+合同	Contract
+控制	Control
+文档	Document
+文件夹	Folder
+格式	Format
+指南	Guide
+标识	Identification
+检验批	Inspection Lot
+发票	Invoice
+问题	Issue
+作业	Job
+关键词	Keyword
+主数据管理	Master Data Management
+备忘录	Memo
+消息	Message
+模式	Mode
+监控	Monitor
+通知	Notification
+编号	Number
+组织	Organization
+产值	Output Value
+业主	Owner
+支付	Payment
+周期	Period
+计划	Plan
+岗位	Position
+价格	Price
+流程	Process
+采购	Purchase
+质量	Quality
+安全	Safety
+结算	Settlement
+分包合同	Subcontract
+请购	Requisition
+附件	Attachment
+审批	Approval
+登记	Register
+主表	Master
+备注	Memo
+金额	Amount
+单价	Price
+日期	Date
+名称	Name
+标题	Title
+状态	Status
+付款	Payment
+到货	Arrival
+入库	In Store
+出库	Out Store
+领料	Requisition
+退料	Return
+仓库	Storage
+批次	Batch
+税额	Tax Amount
+税率	Tax Rate
+不含税	Exclude Tax
+验收	Acceptance
+进度	Progress
+企业项目结构	Enterprise Project Structure
+业务域	Business Area
+工程量清单	Bill of Quantities
+投资	Investment
+标段	Bid Section
+市场	Marketing
+招标	Bidding
+主数据	Master Data
+知识	Knowledge
+企业	Enterprise
+收款	Receipt
+索赔	Claim
+退库	Return
+盘点	Inventory
+调拨	Transfer
+检验	Check
+催交	Expediting
+监造	Supervision
+询价	Inquiry
+评标	Bid Review
+中标	Bid Win
+投标	Tender
+资质预审	Prequalification
+风险分解结构	Risk Breakdown Structure
+组织分解结构	Organization Breakdown Structure
+检查项	Quality Item
+费用科目	Cost Breakdown Structure
+概算	Estimate
+删除	Recycle
+实际	Actual
+分配	Allocation
+累计	Accumulated
+余额	Balance
+计算	Calculate
+完成	Complete
+创建	Create
+当前	Current
+持续时间	Duration
+输入	Entry
+执行	Execute
+导出	Export
+导入	Import
+初始化	Initialize
+最后	Last
+最大	Maximum
+最小	Minimum
+原始	Original
+剩余	Remain
+结果	Result
+开始	Start
+目标	Target
+总计	Total
+申请	Application
+领用	Requisition
+发布	Release
+整改	Rectification
+主键	Primary Key
+外键	Foreign Key
+父键	Parent Key
+管理员	Administrator
+批准人	Approver
+公司	Company
+经理	Manager
+所有者	Owner
+录入人	Register Human
+负责人	Responsible Person
+监督人	Supervisor
+更新人	Update Human
+日历	Calendar
+权限组	Right Group
+项目经理	Project Manager
+甲方	Party A
+乙方	Party B
+承包商	Contractor
+监理	Supervisor
+设计经理	Design Manager
+责任人	Responsible Person
+经办人	Handler
+签发人	Sender
+接收人	Receiver
+审核人	Auditor
+审定人	Authorizer
+校对人	Proofreader
+施工单位	Construction Company
+监理单位	Supervision Company
+设计单位	Design Company
+申请人	Applicant
+审批人	Approval Human
+采购需求	Purchase Requisition
+物资分类	Material Business Structure
+不含税金额	Exclude Tax Amount
+不含税单价	Exclude Tax Price
+需求跟踪号	PR Detail Code
+采购专业	Purchase Major
+物资编码	Material Code
+物资名称	Material Name
+批次号	Batch Code
+原材料	Raw Material
+缺陷处理	Defect Treatment
+进度款	Progress Payment
+承办	Hosting
+履约	Performance
+费用类型	Cost Type
+预付款	Advance Payment
+质保金	Warranty Gold
+奖惩	Rewards and Punishments
+代扣代缴	Withhold
+主合同	Main Contract
+采购合同	Purchase Contract
+进项合同	Income Contract
+出项合同	Outcome Contract
+保函	Guarantee
+支付项	Payment Item
+计划开始	Target Start
+计划完成	Target End
+实际开始	Actual Start
+实际完成	Actual End
+期望完成	Expect End
+权重百分比	Estimated Weight Percentage
+计划值	Planned Value
+挣得值	BCWP
+小时数	Hour Count
+计划完成日期	Target End Date
+计划开始日期	Target Start Date
+实际完成日期	Actual End Date
+实际开始日期	Actual Start Date
+剩余工期	Remain Duration
+工期（小时）	Duration Hour Count
+紧前关系	Predecessor
+升版	Upgrade
+预期	Expect
+最早开始	Early Start
+最晚结束	Late End
+不合格	Unqualified
+危险源	Hazard Resource
+事故	Accident
+焊接	Welding
+质量控制	Quality Control
+质量检查项	Quality Inspection
+决算	Settlement
+建筑费	Construction Fee
+安装费	Installation Fee
+设备费	Equipment Fee
+材料费	Material Fee
+其他费用	Other Cost
+增值税	Value Added Tax
+货币	Currency
+确认	Confirm
+密级	Secret Level
