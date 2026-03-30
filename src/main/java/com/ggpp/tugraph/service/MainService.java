@@ -214,9 +214,11 @@ public class MainService {
         String parentPath = this.getParentDir();
         String name1 = "base";
         String name2 = "imgscalr";
+        String name3 = "imgscalr60";
         FileUtils.mkdirs(parentPath + "/pic/");
         String path = parentPath + "/pic/" + name1 + ".png";
         String path2 = parentPath + "/pic/" + name2 + ".png";
+        String path3 = parentPath + "/pic/" + name3 + ".png";
         // 1. 读取原图（假设输入文件为 input.png）
         BufferedImage image = ImageUtils.base64ToImage(str2);
         try {
@@ -234,15 +236,27 @@ public class MainService {
 //            log.info("path2:"+path2);
 
             BufferedImage img = ImageUtils.makeBackgroundTransparent(image);
+            BufferedImage img2 = ImageUtils.makeBackgroundTransparent(image);
             Thumbnails.of(img)
-                    .size(60, 60)
+                    .size(300, 300)
                     .keepAspectRatio(false)
                     .toFile(new File(path));
             BufferedImage resizeImg = ImageIO.read(new File(path));
-            log.info("图片已处理成长："+60+"宽："+60);
+            log.info("图片已处理成长："+300+"宽："+300+"地址："+path);
+            Thumbnails.of(resizeImg)
+                    .scale(0.2)
+                    .toFile(new File(path2));
+            BufferedImage resizeImg2 = ImageIO.read(new File(path2));
+            log.info("图片已处理成0.2倍，地址："+path2);
+            Thumbnails.of(img2)
+                    .size(60, 60)
+                    .keepAspectRatio(false)
+                    .toFile(new File(path3));
+            BufferedImage resizeImg3 = ImageIO.read(new File(path3));
+            log.info("图片已处理成60倍，地址："+path3);
             //扣成背景透明
-            String str = ImageUtils.image2Base64(resizeImg);
-            log.info("str:data:image/png;base64,"+str);
+//            String str = ImageUtils.image2Base64(resizeImg2);
+//            log.info("str:data:image/png;base64,"+str2);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -733,5 +747,9 @@ public class MainService {
         List<BaseUser> list = userMapper.selectList(new LambdaQueryWrapper<BaseUser>()
                 .eq(BaseUser::getId, 1));
         log.info("AAA");
+    }
+
+    public void doQysText() {
+        log.info("测试通过！");
     }
 }

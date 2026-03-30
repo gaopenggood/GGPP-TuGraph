@@ -1,0 +1,7 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.qys</groupId>
+    <artifactId>que-java</artifactId>
+    <version>3.0.0</version>
+    <description>Local repo file</description>
+</project>

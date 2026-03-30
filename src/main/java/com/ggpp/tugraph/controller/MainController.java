@@ -171,4 +171,8 @@ public class MainController {
         BigDecimal b3 = b1.add(b2);
         log.info("DOUBLE SUM {} \n BIGDECIMAL SUM {}", d3, b3);
     }
+
+    public void qysText() {
+        service.doQysText();
+    }
 }

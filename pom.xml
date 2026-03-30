@@ -128,6 +128,11 @@
             <artifactId>hanlp</artifactId>
             <version>portable-1.8.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.qys</groupId>
+            <artifactId>qys-java</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -162,6 +167,17 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>local-project-repo</id>
+            <url>file:${project.basedir}/.maven-repo</url> <!-- 指向项目内的目录 -->
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy> <!-- 每次构建都检查更新 -->
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <pluginRepositories>

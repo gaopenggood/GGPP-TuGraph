@@ -174,11 +174,9 @@ public class ImageUtils {
 
                 // 如果alpha值为0，表示该像素完全透明
                 if (alpha == 0) {
-                    System.out.println("透明"+i);
                     i++;
                     continue;
                 }
-                System.out.println("非透明"+j);
                 j++;
                 // 判断是否为黑色（严格判断 R=0,G=0,B=0）
                 boolean isBlack = (red <= 120) && (green <= 120) && (blue <= 120);
