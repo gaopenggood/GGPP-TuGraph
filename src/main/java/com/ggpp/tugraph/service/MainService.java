@@ -752,4 +752,19 @@ public class MainService {
     public void doQysText() {
         log.info("测试通过！");
     }
+
+    public void doPicDeal() {
+        String m1 = "D:\\0 工作日志\\1-19 2025工作内容\\1 电子签章\\待处理2\\m1";
+        String m2 = "D:\\0 工作日志\\1-19 2025工作内容\\1 电子签章\\待处理2\\m2";
+        String m3 = "D:\\0 工作日志\\1-19 2025工作内容\\1 电子签章\\待处理2\\m3";
+        String m4 = "D:\\0 工作日志\\1-19 2025工作内容\\1 电子签章\\待处理2\\m4";
+        String m5 = "D:\\0 工作日志\\1-19 2025工作内容\\1 电子签章\\待处理2\\m5";
+        try {
+            ImageUtils.batchBoldLine(m1, m3);
+//            ImageUtils.makeBackgroundTransparent(m3, m2);
+            ImageUtils.rotateCounterClockwise90(m3, m4);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
 }

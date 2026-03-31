@@ -175,4 +175,9 @@ public class MainController {
     public void qysText() {
         service.doQysText();
     }
+
+    @GetMapping("/picsEmpty")
+    public void doPicDeal() {
+        service.doPicDeal();
+    }
 }

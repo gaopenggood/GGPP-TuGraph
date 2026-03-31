@@ -1,11 +1,15 @@
 package com.ggpp.tugraph.util;
 
+import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 
@@ -193,6 +197,238 @@ public class ImageUtils {
 
         // 4. 保存为PNG（必须选 PNG 以支持透明度）
         return outputImage;
+    }
+
+    // 要识别为背景的颜色：纯白色
+    private static final Color TARGET_BG_COLOR = Color.WHITE;
+    // 容差值：0=严格匹配白色，1-20=允许接近白色也变透明（根据你的图片调整）
+    private static final int TOLERANCE = 10;
+
+    /**
+     * 批量处理图片：白底转透明
+     */
+    public static void makeBackgroundTransparent(String sourceDir, String outputDir) throws IOException {
+        // 1. 创建输出目录（不存在则自动创建）
+        Path outputPath = Paths.get(outputDir);
+        Files.createDirectories(outputPath);
+
+        // 2. 遍历源目录所有文件
+        File sourceFolder = new File(sourceDir);
+        File[] files = sourceFolder.listFiles();
+
+        if (files == null || files.length == 0) {
+            System.out.println("源文件夹没有可处理的图片");
+            return;
+        }
+
+        int successCount = 0;
+        for (File file : files) {
+            if (file.isDirectory()) continue;
+
+            String fileName = file.getName().toLowerCase();
+            if (!fileName.endsWith(".png") && !fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg")) {
+                continue; // 只处理图片
+            }
+
+            try {
+                // 读取图片
+                BufferedImage original = ImageIO.read(file);
+                if (original == null) continue;
+
+                // 创建带透明通道的新图片
+                BufferedImage transparentImage = new BufferedImage(
+                        original.getWidth(),
+                        original.getHeight(),
+                        BufferedImage.TYPE_INT_ARGB
+                );
+
+                // 逐像素处理
+                for (int y = 0; y < original.getHeight(); y++) {
+                    for (int x = 0; x < original.getWidth(); x++) {
+                        int rgb = original.getRGB(x, y);
+                        Color pixelColor = new Color(rgb, true);
+
+                        // 判断是否是背景色（含容差）
+                        if (isBackgroundColor(pixelColor)) {
+                            // 透明像素
+                            transparentImage.setRGB(x, y, 0x00FFFFFF);
+                        } else {
+                            // 保留原像素
+                            transparentImage.setRGB(x, y, rgb);
+                        }
+                    }
+                }
+
+                // 输出文件（统一保存为 PNG，因为只有 PNG 支持透明）
+                String outputFileName = getBaseName(file.getName()) + ".png";
+                File outputFile = new File(outputPath.toFile(), outputFileName);
+                ImageIO.write(transparentImage, "PNG", outputFile);
+
+                successCount++;
+                System.out.println("处理完成：" + file.getName());
+
+            } catch (Exception e) {
+                System.err.println("处理失败：" + file.getName() + "，原因：" + e.getMessage());
+            }
+        }
+
+        System.out.println("\n✅ 全部处理完成，成功：" + successCount + " 张");
+    }
+
+    public static void rotateCounterClockwise90(String sourceDir, String outputDir) throws IOException {
+        // 1. 创建输出目录
+        Path outputPath = Paths.get(outputDir);
+        Files.createDirectories(outputPath);
+
+        // 2. 获取源文件夹所有文件
+        File sourceFolder = new File(sourceDir);
+        File[] files = sourceFolder.listFiles();
+
+        if (files == null || files.length == 0) {
+            System.out.println("源文件夹无图片");
+            return;
+        }
+
+        int success = 0;
+        for (File file : files) {
+            if (file.isDirectory()) continue;
+
+            String name = file.getName().toLowerCase();
+            if (!name.endsWith(".png") && !name.endsWith(".jpg") && !name.endsWith(".jpeg")
+                    && !name.endsWith(".bmp") && !name.endsWith(".gif")) {
+                continue;
+            }
+
+            try {
+                // 输出文件路径（保持原名）
+                File outFile = new File(outputPath.toFile(), file.getName());
+                        // ========== 核心：Thumbnails 逆时针旋转90度 ==========
+                Thumbnails.of(file)
+                        .size(100, 100)
+//                        .size(file.length() > 1024*1024*10 ? 1920 : 4096, 4096) // 超大图自动限制尺寸，避免OOM
+                        .rotate(-90)  // -90 = 逆时针90度；90 = 顺时针
+                        .outputQuality(1.0f) // 100%质量不压缩
+                        .toFile(outFile);
+                // ====================================================
+
+                success++;
+                System.out.println("旋转完成：" + file.getName());
+
+            } catch (Exception e) {
+                System.err.println("旋转失败：" + file.getName() + " → " + e.getMessage());
+            }
+        }
+
+        System.out.println("\n✅ 全部处理完成，成功旋转：" + success + " 张");
+    }
+
+    // 线条加粗：2px（可改 1/2/3）
+    private static final int BOLD_PX = 5;
+    // 黑色/深色线条才会被加粗
+    private static final int LINE_DARK_THRESHOLD = 180;
+
+    /**
+     * 独立方法：只做【线条加粗2px】，不旋转、不透明
+     */
+    public static BufferedImage boldLine2px(BufferedImage original) {
+        int w = original.getWidth();
+        int h = original.getHeight();
+
+        // 创建新图片
+        BufferedImage result = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = result.createGraphics();
+        g2d.drawImage(original, 0, 0, null);
+
+        // 加粗核心：深色线条周围扩张 2px
+        for (int dy = -BOLD_PX; dy <= BOLD_PX; dy++) {
+            for (int dx = -BOLD_PX; dx <= BOLD_PX; dx++) {
+                if (dx == 0 && dy == 0) continue; // 跳过中心点
+                if (Math.abs(dx) + Math.abs(dy) > BOLD_PX) continue; // 控制扩张范围
+
+                for (int y = 0; y < h; y++) {
+                    for (int x = 0; x < w; x++) {
+                        int rgb = original.getRGB(x, y);
+                        Color c = new Color(rgb);
+
+                        // 只处理深色线条（黑/灰黑）
+                        if (isDarkLine(c)) {
+                            int nx = x + dx;
+                            int ny = y + dy;
+                            if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                                result.setRGB(nx, ny, rgb);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        g2d.dispose();
+        return result;
+    }
+
+    /**
+     * 批量文件夹处理：输入 → 输出（纯加粗，不做其他处理）
+     */
+    public static void batchBoldLine(String sourceDir, String outputDir) throws IOException {
+        Path outPath = Paths.get(outputDir);
+        Files.createDirectories(outPath);
+
+        File[] files = new File(sourceDir).listFiles();
+        if (files == null || files.length == 0) {
+            System.out.println("文件夹无图片");
+            return;
+        }
+
+        int count = 0;
+        for (File file : files) {
+            if (file.isDirectory()) continue;
+            String name = file.getName().toLowerCase();
+            if (!name.endsWith(".png") && !name.endsWith(".jpg") && !name.endsWith(".jpeg")) continue;
+
+            try {
+                BufferedImage image = ImageIO.read(file);
+                BufferedImage boldImage = boldLine2px(image); // 独立加粗方法调用
+
+                File outFile = new File(outPath.toFile(), file.getName());
+                ImageIO.write(boldImage, "PNG", outFile);
+                count++;
+                System.out.println("加粗完成：" + file.getName());
+            } catch (Exception e) {
+                System.err.println("失败：" + file.getName());
+            }
+        }
+        System.out.println("\n✅ 批量加粗完成：" + count + " 张");
+    }
+
+    // 判断是否为深色线条
+    private static boolean isDarkLine(Color c) {
+        int gray = (c.getRed() + c.getGreen() + c.getBlue()) / 3;
+        return gray < LINE_DARK_THRESHOLD;
+    }
+
+    /**
+     * 判断像素是否属于要透明化的背景色
+     */
+    private static boolean isBackgroundColor(Color color) {
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+
+        int tr = TARGET_BG_COLOR.getRed();
+        int tg = TARGET_BG_COLOR.getGreen();
+        int tb = TARGET_BG_COLOR.getBlue();
+
+        return Math.abs(r - tr) <= TOLERANCE
+                && Math.abs(g - tg) <= TOLERANCE
+                && Math.abs(b - tb) <= TOLERANCE;
+    }
+
+    /**
+     * 获取文件名（不含后缀）
+     */
+    private static String getBaseName(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        return dotIndex == -1 ? fileName : fileName.substring(0, dotIndex);
     }
 
 }
